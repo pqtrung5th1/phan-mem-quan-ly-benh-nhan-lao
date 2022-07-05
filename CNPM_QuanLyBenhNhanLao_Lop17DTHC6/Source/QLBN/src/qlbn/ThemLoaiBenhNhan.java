@@ -5,7 +5,7 @@
  */
 package qlbn;
 
-import Connection.Sqlconnect;
+import Connection.SqlConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,16 +27,16 @@ import javax.swing.table.DefaultTableModel;
 public class ThemLoaiBenhNhan extends javax.swing.JFrame {
 
     Statement statement;
-    Connection conn=null;
-    PreparedStatement ps=null;
-    ResultSet rs=null;
-    public  Sqlconnect sqlConn=new Sqlconnect();
-   
-    public DefaultTableModel tblModel=new  DefaultTableModel();
-    
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    SqlConnection sqlConn = new SqlConnection();
+
+    public DefaultTableModel tblModel = new DefaultTableModel();
+
     public ThemLoaiBenhNhan() {
         initComponents();
-        setLocationRelativeTo(null);
+        //setLocationRelativeTo(null);
         LayDuLieu();
     }
 
@@ -59,21 +59,23 @@ public class ThemLoaiBenhNhan extends javax.swing.JFrame {
         btnSua = new javax.swing.JButton();
         btnXoa = new javax.swing.JButton();
         btnHuy = new javax.swing.JButton();
+        btnBack = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
 
         jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Quản Lý Loại Bệnh Nhân");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel1.setText("LOẠI BỆNH NHÂN");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, -1, -1));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 20, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel2.setText("Tên loại bệnh nhân:");
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 90, -1, -1));
-        getContentPane().add(txtTenLoai, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 90, 260, 37));
+        getContentPane().add(txtTenLoai, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 90, 310, 37));
 
         grLoaiBenhNhan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -88,7 +90,7 @@ public class ThemLoaiBenhNhan extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(grLoaiBenhNhan);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 230, 810, 205));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 230, 810, 230));
 
         btnThem.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         btnThem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/qlbn/sign-add-icon.png"))); // NOI18N
@@ -133,35 +135,48 @@ public class ThemLoaiBenhNhan extends javax.swing.JFrame {
         });
         getContentPane().add(btnHuy, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 170, 130, -1));
 
+        btnBack.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/qlbn/iconBack.png"))); // NOI18N
+        btnBack.setText("Trở Về");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 40));
+
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/qlbn/MA-Banner.jpg"))); // NOI18N
-        jLabel4.setText("jLabel4");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(-240, -310, 1070, 780));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 810, 460));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
         try {
-            conn=sqlConn.getSQLServerConnection();
-            ps=conn.prepareStatement("insert into LOAIBENHNHAN values(?)");
-            ps.setString(1, txtTenLoai.getText());
-            int ret = ps.executeUpdate();
-            if(ret>0){
-                JOptionPane.showMessageDialog(this,"Thêm thành công");
-                tblModel.setRowCount(0);
-                LayDuLieu();
+            if (txtTenLoai.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tên loại bệnh nhân không được để trống!");
+            } else {
+                conn = sqlConn.getSQLServerConnection();
+                ps = conn.prepareStatement("insert into LOAIBENHNHAN values(?)");
+                ps.setString(1, txtTenLoai.getText());
+                int ret = ps.executeUpdate();
+                if (ret > 0) {
+                    JOptionPane.showMessageDialog(this, "Thêm thành công");
+                    tblModel.setRowCount(0);
+                    LayDuLieu();
+                }
             }
-            
         } catch (Exception e) {
         }
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
         try {
-            conn=sqlConn.getSQLServerConnection();
-            ps=conn.prepareStatement("Update LOAIBENHNHAN set TENLOAI=? where MALOAIBN=?");
-            ps.setString(2, grLoaiBenhNhan.getValueAt(grLoaiBenhNhan.getSelectedRow(),0).toString());
+            conn = sqlConn.getSQLServerConnection();
+            ps = conn.prepareStatement("Update LOAIBENHNHAN set TENLOAI=? where MALOAIBN=?");
+            ps.setString(2, grLoaiBenhNhan.getValueAt(grLoaiBenhNhan.getSelectedRow(), 0).toString());
             ps.setString(1, txtTenLoai.getText());
 
             ps.executeUpdate();
@@ -174,13 +189,13 @@ public class ThemLoaiBenhNhan extends javax.swing.JFrame {
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
         int ret = JOptionPane.showConfirmDialog(this, "Do you want to delete?", "Confirm", JOptionPane.YES_NO_OPTION);
-        if(ret != JOptionPane.YES_OPTION) {
+        if (ret != JOptionPane.YES_OPTION) {
             return;
         }
         try {
-            conn=sqlConn.getSQLServerConnection();
-            ps=conn.prepareStatement("Delete From LOAIBENHNHAN where MALOAIBN = ?");
-            ps.setString(1,grLoaiBenhNhan.getValueAt(grLoaiBenhNhan.getSelectedRow(),0).toString());
+            conn = sqlConn.getSQLServerConnection();
+            ps = conn.prepareStatement("Delete From LOAIBENHNHAN where MALOAIBN = ?");
+            ps.setString(1, grLoaiBenhNhan.getValueAt(grLoaiBenhNhan.getSelectedRow(), 0).toString());
             ps.executeUpdate();
             tblModel.setRowCount(0);
             LayDuLieu();
@@ -191,9 +206,16 @@ public class ThemLoaiBenhNhan extends javax.swing.JFrame {
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
-        //this.setVisible(false);
-        System.exit(0);
+        this.setVisible(false);
+        ManHinhChinh mhc = new ManHinhChinh();
+        mhc.setVisible(true);
     }//GEN-LAST:event_btnHuyActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        ManHinhChinh mhc = new ManHinhChinh();
+        mhc.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnBackActionPerformed
 
     /**
      * @param args the command line arguments
@@ -231,6 +253,7 @@ public class ThemLoaiBenhNhan extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
     private javax.swing.JButton btnHuy;
     private javax.swing.JButton btnSua;
     private javax.swing.JButton btnThem;
@@ -254,19 +277,22 @@ public class ThemLoaiBenhNhan extends javax.swing.JFrame {
                 Logger.getLogger(DangNhap.class.getName()).log(Level.SEVERE, null, ex);
             }
             int number;
+            int stt=1;
             Vector row,column;
             column =new Vector();
             rs=statement.executeQuery("select * from LOAIBENHNHAN");
             ResultSetMetaData metadata=rs.getMetaData();
             number =metadata.getColumnCount();
-            for(int i=1;i<=number;i++){
+             column.addElement("STT");
+            for(int i=2;i<=number;i++){
                 column.add(metadata.getColumnName(i));
             }
             tblModel.setColumnIdentifiers(column);
             
             while (rs.next()) {                
                 row=new Vector();
-                for(int i=1;i<=number;i++){
+                row.addElement(stt++);
+                for(int i=2;i<=number;i++){
                     row.addElement(rs.getString(i));
                 }
                 tblModel.addRow(row);
@@ -287,20 +313,6 @@ public class ThemLoaiBenhNhan extends javax.swing.JFrame {
 //           
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            try {
-                if(conn!=null){
-                    conn.close();
-                }
-                if (statement != null) {
-                     statement.close();
-                }
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
         }
     }
 }

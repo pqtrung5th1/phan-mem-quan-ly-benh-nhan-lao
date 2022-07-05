@@ -5,22 +5,18 @@
  */
 package qlbn;
 
-import Connection.Sqlconnect;
-import DAO.THUOC;
+import Connection.SqlConnection;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-
 import java.util.Vector;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -30,23 +26,21 @@ import javax.swing.table.DefaultTableModel;
  * @author admin
  */
 public class ThemLoaiThuoc extends javax.swing.JFrame {
+
     Statement statement;
-    Connection conn=null;
-    PreparedStatement ps=null;
-    ResultSet rs=null;
-    public  Sqlconnect sqlConn=new Sqlconnect();
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    public SqlConnection sqlConn = new SqlConnection();
     //private String header[]={"MALOAI", "MOTACHITIET", "TENLOAI"};
-    public DefaultTableModel tblModel=new  DefaultTableModel();
-    
+    public DefaultTableModel tblModel = new DefaultTableModel();
+
     public ThemLoaiThuoc() {
         initComponents();
         setLocationRelativeTo(null);
         LayDuLieu();
         
-            
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -68,9 +62,11 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         grLoaiThuoc = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        btnBack = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Quản Lý Loại Thuốc");
         setBackground(new java.awt.Color(153, 204, 255));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -79,8 +75,8 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 20, -1, 50));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel2.setText("Tên loại thuốc:");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 120, -1, 30));
+        jLabel2.setText("Viết Tắt:");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 120, -1, 30));
 
         txtTenLoaiThuoc.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtTenLoaiThuoc.addActionListener(new java.awt.event.ActionListener() {
@@ -88,7 +84,7 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
                 txtTenLoaiThuocActionPerformed(evt);
             }
         });
-        getContentPane().add(txtTenLoaiThuoc, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 120, 165, 40));
+        getContentPane().add(txtTenLoaiThuoc, new org.netbeans.lib.awtextra.AbsoluteConstraints(535, 120, 240, 40));
 
         txtMoTa.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtMoTa.addActionListener(new java.awt.event.ActionListener() {
@@ -96,7 +92,7 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
                 txtMoTaActionPerformed(evt);
             }
         });
-        getContentPane().add(txtMoTa, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 120, 165, 40));
+        getContentPane().add(txtMoTa, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 120, 230, 40));
 
         btnHuy.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         btnHuy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/qlbn/cancel.png"))); // NOI18N
@@ -160,6 +156,11 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        grLoaiThuoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                grLoaiThuocMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(grLoaiThuoc);
 
         getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, 800, 190));
@@ -168,9 +169,19 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
         jLabel4.setText("Mô tả chi tiết: ");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, -1, 30));
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/qlbn/MA-Banner.jpg"))); // NOI18N
-        jLabel3.setText("jLabel3");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(-750, -320, 1550, 780));
+        btnBack.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/qlbn/iconBack.png"))); // NOI18N
+        btnBack.setText("Trở Về");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 40));
+
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/qlbn/MA-Banner.jpg"))); // NOI18N
+        jLabel5.setText("jLabel3");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(-750, -320, 1550, 780));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -179,104 +190,160 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTenLoaiThuocActionPerformed
 
+    private void LayDuLieu() {
+        try {
+            conn = sqlConn.getSQLServerConnection();
+            try {
+                statement = conn.createStatement();
+            } catch (SQLException ex) {
+                Logger.getLogger(DangNhap.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            int number;
+            Vector row, column;
+            int stt = 1;
+            column = new Vector();
+            rs = statement.executeQuery("select * from LOAITHUOC");
+            ResultSetMetaData metadata = rs.getMetaData();
+            number = metadata.getColumnCount();
+            column.addElement("STT");
+            for (int i = 2; i <= number; i++) {
+                column.add(metadata.getColumnName(i));
+            }
+            tblModel.setColumnIdentifiers(column);
+
+            while (rs.next()) {
+                row = new Vector();
+                row.addElement(stt++);
+                for (int i = 2; i <= number; i++) {
+                    //row.addElement(stt++);
+                    row.addElement(rs.getString(i));
+                }
+                tblModel.addRow(row);
+                grLoaiThuoc.setModel(tblModel);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        if(txtTenLoaiThuoc.getText().isEmpty()){
+        if (txtTenLoaiThuoc.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập tên loại thuốc");
             txtTenLoaiThuoc.requestFocus();
             return;
         }
-        if(txtMoTa.getText().isEmpty()){
+        if (txtMoTa.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập mô tả");
             txtMoTa.requestFocus();
             return;
         }
-        int ret=JOptionPane.showConfirmDialog(this, "Bạn có muốn thêm?","Confirm", JOptionPane.YES_NO_OPTION);
-        if(ret !=JOptionPane.YES_OPTION){
+        int ret = JOptionPane.showConfirmDialog(this, "Bạn có muốn thêm?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (ret != JOptionPane.YES_OPTION) {
             return;
         }
-        
+
         try {
-            conn=sqlConn.getSQLServerConnection();
-            try{
-                statement=conn.createStatement();
-            }
-            catch(SQLException ex){
+            conn = sqlConn.getSQLServerConnection();
+            try {
+                statement = conn.createStatement();
+            } catch (SQLException ex) {
                 Logger.getLogger(DangNhap.class.getName()).log(Level.SEVERE, null, ex);
             }
             // String sql="select * from LOAITHUOC where TENLOAI like '%'";
-            String insert="insert into LOAITHUOC (MOTACHITIET,TENLOAI) values(?,?)";
+            String insert = "insert into LOAITHUOC (MOTACHITIET,TENLOAI) values(?,?)";
             //ResultSet resultSet;
-            ps=conn.prepareStatement(insert);
+            ps = conn.prepareStatement(insert);
             ps.setString(1, txtMoTa.getText());
             ps.setString(2, txtTenLoaiThuoc.getText());
             // Thực thi câu lệnh insert
-            
+
             ret = ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Đã thêm thành công","Thông báo",1);
+            JOptionPane.showMessageDialog(null, "Đã thêm thành công", "Thông báo", 1);
             tblModel.setRowCount(0);
             LayDuLieu();
             //System.exit(ret);
-            
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Thêm không thành công","Thông báo",1);
+            JOptionPane.showMessageDialog(null, "Thêm không thành công", "Thông báo", 1);
             //System.exit(ret);
         } finally {
             try {
-             if (conn != null) {
-              conn.close();
-             }
-             if (ps == null) {
-             } else {
-                 ps.close();
+                if (conn != null) {
+                    conn.close();
+                }
+                if (ps == null) {
+                } else {
+                    ps.close();
                 }
             } catch (Exception ex2) {
-             ex2.printStackTrace();
+                ex2.printStackTrace();
             }
     }//GEN-LAST:event_btnThemActionPerformed
     }
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
-        //this.setVisible(false);
-        System.exit(0);
+        this.setVisible(false);
+        ManHinhChinh mhc = new ManHinhChinh();
+        mhc.setVisible(true);
     }//GEN-LAST:event_btnHuyActionPerformed
+    private void NapItemDuocChon() {
+        if (grLoaiThuoc.getSelectedRow() < 0) {
+            return;
+        }
+        int row = grLoaiThuoc.getSelectedRow();
 
+        txtMoTa.setText((String) grLoaiThuoc.getValueAt(row, 1));
+
+        txtTenLoaiThuoc.setText((String) grLoaiThuoc.getValueAt(row, 2));
+    }
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
         try {
-            conn=sqlConn.getSQLServerConnection();
-            ps=conn.prepareStatement("Update LOAITHUOC set MOTACHITIET=?,TENLOAI=? where MALOAI=?");
-            ps.setString(3, grLoaiThuoc.getValueAt(grLoaiThuoc.getSelectedRow(),0).toString());
+            conn = sqlConn.getSQLServerConnection();
+            ps = conn.prepareStatement("Update LOAITHUOC set MOTACHITIET=?,TENLOAI=? where MALOAI=?");
+            ps.setString(3, grLoaiThuoc.getValueAt(grLoaiThuoc.getSelectedRow(), 0).toString());
             ps.setString(1, txtMoTa.getText());
             ps.setString(2, txtTenLoaiThuoc.getText());
-            
+
             ps.executeUpdate();
             tblModel.setRowCount(0);
             LayDuLieu();
         } catch (Exception e) {
         }
-        
-            
+
+
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
         int ret = JOptionPane.showConfirmDialog(this, "Do you want to delete?", "Confirm", JOptionPane.YES_NO_OPTION);
-        if(ret != JOptionPane.YES_OPTION) {
+        if (ret != JOptionPane.YES_OPTION) {
             return;
         }
         try {
-            conn=sqlConn.getSQLServerConnection();
-            ps=conn.prepareStatement("Delete From LOAITHUOC where MALOAI = ?");
-            ps.setString(1,grLoaiThuoc.getValueAt(grLoaiThuoc.getSelectedRow(),0).toString());
+            conn = sqlConn.getSQLServerConnection();
+            ps = conn.prepareStatement("Delete From LOAITHUOC where MALOAI = ?");
+            ps.setString(1, grLoaiThuoc.getValueAt(grLoaiThuoc.getSelectedRow(), 0).toString());
             ps.executeUpdate();
             tblModel.setRowCount(0);
             LayDuLieu();
-               
+
         } catch (Exception e) {
             System.out.println(e.toString());
-        }  
+        }
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void txtMoTaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMoTaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMoTaActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        ManHinhChinh mhc = new ManHinhChinh();
+        mhc.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void grLoaiThuocMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_grLoaiThuocMouseClicked
+        NapItemDuocChon();
+    }//GEN-LAST:event_grLoaiThuocMouseClicked
 
     /**
      * @param args the command line arguments
@@ -314,6 +381,7 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
     private javax.swing.JButton btnHuy;
     private javax.swing.JButton btnSua;
     private javax.swing.JButton btnThem;
@@ -321,74 +389,11 @@ public class ThemLoaiThuoc extends javax.swing.JFrame {
     private javax.swing.JTable grLoaiThuoc;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField txtMoTa;
     private javax.swing.JTextField txtTenLoaiThuoc;
     // End of variables declaration//GEN-END:variables
-
-    private void LayDuLieu() {
-        try {
-            conn=sqlConn.getSQLServerConnection();
-            try{
-                statement=conn.createStatement();
-            }
-            catch(SQLException ex){
-                Logger.getLogger(DangNhap.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            int number;
-            Vector row,column;
-            column =new Vector();
-            rs=statement.executeQuery("select * from LOAITHUOC");
-            ResultSetMetaData metadata=rs.getMetaData();
-            number =metadata.getColumnCount();
-            for(int i=1;i<=number;i++){
-                column.add(metadata.getColumnName(i));
-            }
-            tblModel.setColumnIdentifiers(column);
-            
-            while (rs.next()) {                
-                row=new Vector();
-                for(int i=1;i<=number;i++){
-                    row.addElement(rs.getString(i));
-                }
-                tblModel.addRow(row);
-                grLoaiThuoc.setModel(tblModel);
-                        
-            }
-            grLoaiThuoc.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    if(grLoaiThuoc.getSelectedRow()>=0){
-                        //jTextField1.setText(grLoaiThuoc.getValueAt(grLoaiThuoc.getSelectedRow(),0)+"");
-                        txtMoTa.setText(grLoaiThuoc.getValueAt(grLoaiThuoc.getSelectedRow(),1)+"");
-                        txtTenLoaiThuoc.setText(grLoaiThuoc.getValueAt(grLoaiThuoc.getSelectedRow(),2)+"");
-                    }
-                }
-            });
-//           
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally{
-            try {
-                if(conn!=null){
-                    conn.close();
-                }
-                if (statement != null) {
-                     statement.close();
-                }
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        
-    }
-    
-    
-   
+  
 }
